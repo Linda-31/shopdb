@@ -12,18 +12,20 @@ const router=express.Router();
 
 router.post('/signup', async (req, res) => {
  
-console.log('Request Body:', req.body);
-const { fullName, email, password } = req.body;
 
 try {
+
+req.body.password = await bcrypt.hash(req.body.password, 10);
+
+const { fullName, email, password } = req.body;
+
  const existing = await User.findOne({ email });
   if (existing) {
     return res.status(400).json({ message: 'User already exists' });
   }
-   const salt = await bcrypt.genSalt(10);
-   const hashedPassword = await bcrypt.hash(password, salt);
 
-  const newUser = new User({ fullName, email, password: hashedPassword });
+
+  const newUser = new User({ fullName, email, password});
   await newUser.save();
 
   res.status(201).json({ message: 'Signup successful', user: newUser });
@@ -41,7 +43,6 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "❌ User not found" });
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "❌ Incorrect password" });
