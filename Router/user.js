@@ -11,7 +11,6 @@ const router=express.Router();
 
 
 router.post('/signup', async (req, res) => {
- 
 
 try {
 
@@ -48,7 +47,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "❌ Incorrect password" });
     }
 
-    res.status(200).json({ message: "✅ Login successful", user: { fullName: user.fullName, email: user.email } });
+    res.status(200).json({ message: "✅ Login successful", user: { fullName: user.fullName, email: user.email, _id:user._id } });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ message: "Server error" });
