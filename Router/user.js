@@ -53,4 +53,37 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+router.put('/update/:id', async (req, res) => {
+  const { fullName, email, password } = req.body;
+  const updateData = {};
+
+  if (fullName) updateData.fullName = fullName;
+  if (email) updateData.email = email;
+
+  if (password) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    updateData.password = hashedPassword;
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true } 
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ message: '✅ Profile updated', user: updatedUser });
+  } catch (err) {
+    console.error("Update error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 module.exports=router;
