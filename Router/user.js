@@ -43,7 +43,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "❌ User not found" });
     }
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+       if (!isMatch) {
       return res.status(401).json({ message: "❌ Incorrect password" });
     }
 
@@ -55,35 +55,13 @@ router.post("/login", async (req, res) => {
 });
 
 
-router.put('/update/:id', async (req, res) => {
-  const { fullName, email, password } = req.body;
-  const updateData = {};
-
-  if (fullName) updateData.fullName = fullName;
-  if (email) updateData.email = email;
-
-  if (password) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    updateData.password = hashedPassword;
-  }
-
+router.get('/:id', async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true } 
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.status(200).json({ message: '✅ Profile updated', user: updatedUser });
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).send('User not found');
+    res.json(user);
   } catch (err) {
-    console.error("Update error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ error: 'Server error' });
   }
 });
-
-
 module.exports=router;
