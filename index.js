@@ -14,7 +14,10 @@ require('dotenv').config();
 const PORT = process.env.PORT || 3000;
 
 const user=require("./Router/user");
+const product = require("./Router/product");
+
 app.use("/api/users", user);
+app.use("/api/products", product);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

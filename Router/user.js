@@ -55,13 +55,25 @@ router.post("/login", async (req, res) => {
 });
 
 
-router.get('/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).send('User not found');
-    res.json(user);
+    const { id } = req.params;
+    const updatedUser = await User.findByIdAndUpdate(id, req.body, {
+      new: true, 
+      runValidators: true, 
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(updatedUser);
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    console.error('Error updating user:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
+
+
+
 module.exports=router;
