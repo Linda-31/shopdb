@@ -2,7 +2,7 @@ const express = require("express");
 const Product = require("../Modules/productmodule");
 const router = express.Router();
 
-// GET all products
+
 router.get("/", async (req, res) => {
     try {
         const products = await Product.find();
@@ -13,12 +13,11 @@ router.get("/", async (req, res) => {
     }
 });
 
-// POST - Add new product
 router.post("/add", async (req, res) => {
     try {
-         console.log("🟡 Incoming product data:", req.body);
+        
         const {
-            productName,
+            title,
             brandName,
             category,
             price,
@@ -29,7 +28,7 @@ router.post("/add", async (req, res) => {
         } = req.body;
 
         const newProduct = new Product({
-            productName,
+            title,
             brandName,
             category,
             price,
@@ -47,7 +46,6 @@ router.post("/add", async (req, res) => {
     }
 });
 
-// PUT - Update product by ID
 router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
