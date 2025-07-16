@@ -21,10 +21,12 @@ router.post("/add", async (req, res) => {
             brandName,
             category,
             price,
+            originalPrice, 
             color,
-            size,
+            sizes,
             image,
             description,
+            stock,
         } = req.body;
 
         const newProduct = new Product({
@@ -32,10 +34,12 @@ router.post("/add", async (req, res) => {
             brandName,
             category,
             price,
+            originalPrice, 
             color,
-            size,
+            sizes,
             image,
             description,
+            stock,
         });
 
         await newProduct.save();
@@ -64,5 +68,21 @@ router.put("/:id", async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+router.delete("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedProduct = await Product.findByIdAndDelete(id);
+
+        if (!deletedProduct) {
+            return res.status(404).json({ message: "❌ Product not found" });
+        }
+
+        res.status(200).json({ message: "🗑️ Product deleted successfully", product: deletedProduct });
+    } catch (err) {
+        console.error("Error deleting product:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 
 module.exports = router;
