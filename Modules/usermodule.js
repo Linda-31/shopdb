@@ -7,7 +7,9 @@ const userSchema=new mongoose.Schema({
     lastName:{type:String, required:true},
     gender:{type:String, required:true},
     mobile: {type:String, required:true},
-    deliveryAddress: {type:String, required:true}
+    deliveryAddress: {type:String, required:true},
+    status: {type: String,enum: ['Active', 'Inactive', 'Pending'],default: 'Active'},
+    joinedAt: { type: Date, default: Date.now }
 
 });
 module.exports = mongoose.models.User || mongoose.model('User', userSchema);

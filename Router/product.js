@@ -15,13 +15,13 @@ router.get("/", async (req, res) => {
 
 router.post("/add", async (req, res) => {
     try {
-        
+
         const {
             title,
             brandName,
             category,
             price,
-            originalPrice, 
+            originalPrice,
             color,
             sizes,
             image,
@@ -34,7 +34,7 @@ router.post("/add", async (req, res) => {
             brandName,
             category,
             price,
-            originalPrice, 
+            originalPrice,
             color,
             sizes,
             image,
@@ -82,6 +82,44 @@ router.delete("/:id", async (req, res) => {
         console.error("Error deleting product:", err);
         res.status(500).json({ message: "Server error" });
     }
+});
+
+
+router.get("/search", async (req, res) => {
+    try {
+         const query = req.query.q;
+
+        if (!query) {
+            return res.status(400).json({ message: "Search query is required" });
+        }
+
+        const products = await Product.find({
+            $or: [
+                { title: { $regex: query, $options: "i" } },
+                { brandName: { $regex: query, $options: "i" } },
+                { category: { $regex: query, $options: "i" } },
+                { color: { $regex: query, $options: "i" } },
+            ]
+        });
+
+        res.status(200).json(products);
+    } catch (err) {
+        console.error("Error searching products:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+
+
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    res.json(product);
+  } catch (err) {
+    console.error("Error fetching product:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 
