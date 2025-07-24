@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const User = require("../Modules/usermodule");
 const bcrypt = require("bcryptjs");
 const express = require("express");
@@ -8,7 +9,28 @@ router.get('/', async (req, res) => {
   res.json(users);
 });
 
+router.get('/search', async (req, res) => {
+  try {
+    const query = req.query.q;
+    console.log("Search query:", query);
+    if (!query || query.trim() === "") {
+      return res.status(400).json({ message: "Search query missing" });
+    }
 
+    const users = await User.find({
+      $or: [
+        { fullName: { $regex: query, $options: 'i' } },
+        { email: { $regex: query, $options: 'i' } },
+        { mobile: { $regex: query, $options: 'i' } }
+      ]
+    });
+
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Search error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 router.post('/signup', async (req, res) => {
 
   try {
@@ -74,6 +96,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -84,38 +107,26 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+
+
 router.get('/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).send({ error: 'User not found' });
-    res.send(user);
-  } catch (err) {
-    res.status(500).send({ error: 'Server error' });
-  }
-});
+    const { id } = req.params;
 
-
-router.get('/search', async (req, res) => {
-  try {
-
-    const query = req.query.q;
-  console.log("Search query:", query);
-    if (!query) {
-      return res.status(400).json({ message: "Search query missing" });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid user ID format' });
     }
 
-    const users = await User.find({
-      $or: [
-        { fullName: { $regex: query, $options: 'i' } },
-        { email: { $regex: query, $options: 'i' } },
-        { mobile: { $regex: query, $options: 'i' } }
-      ]
-    });
+    const user = await User.findById(id);
 
-    res.status(200).json(users);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json(user);
   } catch (err) {
-    console.error("Search error:", err);
-    res.status(500).json({ message: "Server error" });
+    console.error('Fetch user by ID error:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
