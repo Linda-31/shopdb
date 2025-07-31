@@ -59,10 +59,10 @@ router.put("/:id", async (req, res) => {
         });
 
         if (!updatedProduct) {
-            return res.status(404).json({ message: "❌ Product not found" });
+            return res.status(404).json({ message: "Product not found" });
         }
 
-        res.status(200).json({ message: "✅ Product updated", product: updatedProduct });
+        res.status(200).json({ message: "Product updated", product: updatedProduct });
     } catch (err) {
         console.error("Error updating product:", err);
         res.status(500).json({ message: "Server error" });
@@ -74,10 +74,10 @@ router.delete("/:id", async (req, res) => {
         const deletedProduct = await Product.findByIdAndDelete(id);
 
         if (!deletedProduct) {
-            return res.status(404).json({ message: "❌ Product not found" });
+            return res.status(404).json({ message: " Product not found" });
         }
 
-        res.status(200).json({ message: "🗑️ Product deleted successfully", product: deletedProduct });
+        res.status(200).json({ message: " Product deleted successfully", product: deletedProduct });
     } catch (err) {
         console.error("Error deleting product:", err);
         res.status(500).json({ message: "Server error" });
@@ -122,5 +122,12 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
+router.get('/featured', async (req, res) => {
+  try {
+    const products = await Product.find().limit(4); 
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch products', error });
+  }
+});
 module.exports = router;

@@ -18,11 +18,13 @@ const PORT = process.env.PORT || 3000;
 
 const user=require("./Router/user");
 const product = require("./Router/product");
+const cart = require('./Router/carts');
 const order = require('./Router/order');
+
 
 app.use("/api/users", user);
 app.use("/api/products", product);
-app.use('/api/orders', order);
+app.use('/api/carts', cart);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
