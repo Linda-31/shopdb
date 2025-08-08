@@ -9,6 +9,7 @@ const userSchema=new mongoose.Schema({
     mobile: {type:String},
     deliveryAddress: {type:String},
     status: {type: String,enum: ['Active', 'Inactive'],default: 'Active'},
+    image: { type: String},
     joinedAt: { type: Date, default: Date.now }
 
 });
